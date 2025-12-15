@@ -3,12 +3,12 @@ TID I DAGE = 1000
 N = 121879
 S = 121878
 E = 0
-I = 0
+I = 1
 H = 0
 R = 0
 
-BETA = 0.42
-GAMMA = 0.1
-SIGMA = 0.166
+BETA = 0.266
+GAMMA = 0.111
+SIGMA = 0.200
 h = 0.1
 t = 0.1

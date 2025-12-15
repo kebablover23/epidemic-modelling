@@ -111,8 +111,8 @@ void migrations_effekt_1(CuTest *tc)
     tekstfil[0] = indlaasFil(input);
     fclose(input);
 
-    // Indlæser AAU.txt én gang
-    FILE *input2 = fopen("AAU.txt", "r");
+    // Indlæser AAU_ingen_smittede.txt én gang
+    FILE *input2 = fopen("AAU_ingen_smittede.txt", "r");
     CuAssertPtrNotNull(tc, input2);
     tekstfil[1] = indlaasFil(input2);
     fclose(input2);
