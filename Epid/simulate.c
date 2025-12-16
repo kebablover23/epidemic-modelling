@@ -581,7 +581,7 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
 
     fprintf(file, "Hmax1: %.6f\n", Hmax1);
 
-    if (file != NULL)
+        if (file != NULL)
     {
         fprintf(file, "\n\n");
     }
