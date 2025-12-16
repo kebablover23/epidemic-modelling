@@ -172,12 +172,67 @@ CuSuite *migration_suite(void)
     return suite;
 }
 
-// testsuite af testcases af migrations effekt
+// testcases af deterministisk SIR (simulerEpidemi)
+void sir_en_dag(CuTest *tc)
+{
+    // Arrange - sætter testen op med det den skal bruge
+    SEIHRS_model tekstfil[2];
 
-// testcases af Smitte|Stop effekt
+    // Indlæser KBH.txt én gang
+    FILE *input = fopen("sir_en_dag.txt", "r");
+    CuAssertPtrNotNull(tc, input);
+    tekstfil[0] = indlaasFil(input);
+    fclose(input);
 
-// testsuites af Smitte|Stop effekt
+    FILE *testfile4 = fopen("test_output4.txt", "w");
+    CuAssertPtrNotNull(tc, testfile4);
 
-// testcases af stokastisk simulering uden vaccine og app
+    // Act - kalder den funktion der skal testes
+    simulerEpidemi(
+        tekstfil,
+        1, // SIR
+        0, // ingen app
+        0, // vaccine fra
+        1, // 1 inputfil
+        testfile4,
+        1, // 1 simulering
+        0, // deterministisk
+        0  // ingen terminalprint
+    );
 
-// testsuites af test af stokastisk simulering
+    fclose(testfile4);
+
+    // Assert - Nu åbner vi filen igen og tjekker resultatet
+    testfile4 = fopen("test_output4.txt", "r");
+    CuAssertPtrNotNull(tc, testfile4);
+
+    char line[256];
+    double Imax1;
+    int korrekt_output = 0;
+
+    while (fgets(line, sizeof(line), testfile4))
+    {
+        if (sscanf(line, "Imax1: %lf", &Imax1) == 1)
+        {
+            if (Imax1 > 18 && Imax1 < 20) // vi har beregnet at det korrekt output burde være 18.88
+            {
+                korrekt_output = 1;
+                break;
+            }
+            break;
+        }
+    }
+    fclose(testfile4);
+
+    // forventning
+    CuAssertTrue(tc, korrekt_output == 1); // forventer at der efter 1 dag, kommer korrekt antal mennesker over i I-gruppen
+}
+
+// testsuite af testcases af sir
+CuSuite *sir_suite(void)
+{
+    CuSuite *suite = CuSuiteNew();
+    SUITE_ADD_TEST(suite, sir_en_dag);
+
+    return suite;
+}

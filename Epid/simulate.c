@@ -65,20 +65,22 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
             tekstfil[1].S *= 0.8;
         }
 
-        // Reducérer smitteevne (beta) med 50%
-        tekstfil[0].beta *= 0.5;
+        // Reducérer smitteevne (beta) med 5%
+        tekstfil[0].beta *= 0.95;
         if (valg_input == 2)
         {
-            tekstfil[1].beta *= 0.5;
+            tekstfil[1].beta *= 0.59;
         }
     }
+
+    printf("beta(after)=%f S(after)=%f\n", tekstfil[0].beta, tekstfil[0].S);
     // App effekt bliver brugt én gang
     if (use_app)
     {
-        tekstfil[0].beta *= 0.75; // Reducerer kontakter
+        tekstfil[0].beta *= 0.7; // Reducerer kontakter
         if (valg_input == 2)
         {
-            tekstfil[1].beta *= 0.75;
+            tekstfil[1].beta *= 0.7;
         }
     }
 
@@ -114,11 +116,11 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
     }
 
     // Aldersspecifikke parametre
-    float age_h_1[ALDERS_GRUPPER] = {0.3, 0.3, 0.3, 0.7};    // Sandsynlighed for at ende på hospitalet
-    float age_beta_1[ALDERS_GRUPPER] = {0.5, 0.8, 0.6, 0.4}; // Antal kontakter
+    float age_h_1[ALDERS_GRUPPER] = {0.09, 0.09, 0.09, 0.50}; // Sandsynlighed for at ende på hospitalet
+    float age_beta_1[ALDERS_GRUPPER] = {1, 1, 1, 1};          // Antal kontakter
 
-    float age_h_2[ALDERS_GRUPPER] = {0.3, 0.3, 0.3, 0.7};    // Sandsynlighed for at ende på hospitalet
-    float age_beta_2[ALDERS_GRUPPER] = {0.5, 0.8, 0.6, 0.4}; // Antal kontakter
+    float age_h_2[ALDERS_GRUPPER] = {0.3, 0.3, 0.3, 0.7}; // Sandsynlighed for at ende på hospitalet
+    float age_beta_2[ALDERS_GRUPPER] = {1, 1, 1, 1};      // Antal kontakter
 
     float age_modtagelig_igen[ALDERS_GRUPPER] = {1.0f / 365, 1.0f / 300, 1.0f / 250, 1.0f / 180}; // jo yngre, jo længere er man immun
 
@@ -138,7 +140,7 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
     double Hmax2 = 0.0;
 
     // Simulering (tids-loop)
-    for (int n = 0; n < tekstfil[0].dage; n++)
+    for (int n = 1; n < tekstfil[0].dage; n++)
     {
         // Transfer rate pr dag
         float t1 = tekstfil[0].t;
@@ -396,10 +398,20 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
                 }
 
                 if (model_type == 1)
-                { // SIR
-                    dS_input_1[i] = -beta_i_1 * S_input_1[i] * total_input_1 / tekstfil[0].N - S_ud_1 + S_ud_2;
-                    dI_input_1[i] = beta_i_1 * S_input_1[i] * total_input_1 / tekstfil[0].N - gamma_i_1 * I_input_1[i] - I_ud_1 + I_ud_2;
-                    dR_input_1[i] = gamma_i_1 * I_input_1[i] - R_ud_1 + R_ud_2;
+                {                                                                                                         // SIR
+                    dS_input_1[i] = (-beta_i_1 * S_input_1[i] * total_input_1) / tekstfil[0].N;                           // - S_ud_1 + S_ud_2;
+                    dI_input_1[i] = (beta_i_1 * S_input_1[i] * total_input_1) / tekstfil[0].N - gamma_i_1 * I_input_1[i]; // - I_ud_1 + I_ud_2;
+
+                    float Itest = dI_input_1[i];
+                    printf("%lf", Itest);
+
+                    double Itest1 = tekstfil[0].N;
+                    printf("%lf", Itest1);
+
+                    printf("%lf", total_input_1);
+                    printf("%lf", beta_i_1);
+
+                    dR_input_1[i] = gamma_i_1 * I_input_1[i]; // - R_ud_1 + R_ud_2;
                     dE_input_1[i] = 0;
                     dH_input_1[i] = 0;
                 }
@@ -486,7 +498,7 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
         float sum_S_input_1 = 0, sum_E_input_1 = 0, sum_I_input_1 = 0, sum_R_input_1 = 0, sum_H_input_1 = 0;
         float sum_S_input_2 = 0, sum_E_input_2 = 0, sum_I_input_2 = 0, sum_R_input_2 = 0, sum_H_input_2 = 0;
 
-        for (int i = 0; i < ALDERS_GRUPPER; i++)
+        for (int i = 0; i <= ALDERS_GRUPPER; i++)
         {
             sum_S_input_1 += S_input_1[i];
             sum_E_input_1 += E_input_1[i];
@@ -519,9 +531,9 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
             if (print_to_terminal)
             {
                 if (valg_input == 1)
-                    printf("Day %d | Input 1:(S=%.0f,I=%.0f,R=%.0f, Imax1 = %.0f)\n", n, sum_S_input_1, sum_I_input_1, sum_R_input_1, Imax1);
+                    printf("Day %d | Input 1:(S=%.0f,I=%.0f,R=%.0f, Imax1 = %.2f)\n", n, sum_S_input_1, sum_I_input_1, sum_R_input_1, Imax1);
                 else if (valg_input == 2)
-                    printf("Day %d | Input 1:(S=%.0f, I=%.0f, R=%.0f, Imax1 = %.0f) Input 2: (S=%.0f, I=%.0f, R=%.0f, Imax2 = %.0f)\n", n, sum_S_input_1, sum_I_input_1, sum_R_input_1, Imax1, sum_S_input_2, sum_I_input_2, sum_R_input_2, Imax2);
+                    printf("Day %d | Input 1:(S=%.0f, I=%.0f, R=%.0f, Imax1 = %.2f) Input 2: (S=%.0f, I=%.0f, R=%.0f, Imax2 = %.2f)\n", n, sum_S_input_1, sum_I_input_1, sum_R_input_1, Imax1, sum_S_input_2, sum_I_input_2, sum_R_input_2, Imax2);
             }
 
             if (file != NULL)
@@ -536,9 +548,9 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
             if (print_to_terminal)
             {
                 if (valg_input == 1)
-                    printf("Day %d | Input 1:(S=%.0f, E=%.0f, I=%.0f,R=%.0f, Imax1 = %.0f)\n", n, sum_S_input_1, sum_E_input_1, sum_I_input_1, sum_R_input_1, Imax1);
+                    printf("Day %d | Input 1:(S=%.0f, E=%.0f, I=%.0f,R=%.0f, Imax1 = %.2f)\n", n, sum_S_input_1, sum_E_input_1, sum_I_input_1, sum_R_input_1, Imax1);
                 else if (valg_input == 2)
-                    printf("Day %d | Input 1:(S=%.0f, E=%.0f, I=%.0f, R=%.0f, Imax1 = %.0f) Input 2: (S=%.0f, E=%.0f, I=%.0f, R=%.0f, Imax2 = %.0f)\n", n, sum_S_input_1, sum_E_input_1, sum_I_input_1, sum_R_input_1, Imax1, sum_S_input_2, sum_E_input_2, sum_I_input_2, sum_R_input_2, Imax2);
+                    printf("Day %d | Input 1:(S=%.0f, E=%.0f, I=%.0f, R=%.0f, Imax1 = %.2f) Input 2: (S=%.0f, E=%.0f, I=%.0f, R=%.0f, Imax2 = %.2f)\n", n, sum_S_input_1, sum_E_input_1, sum_I_input_1, sum_R_input_1, Imax1, sum_S_input_2, sum_E_input_2, sum_I_input_2, sum_R_input_2, Imax2);
             }
 
             if (file != NULL)
@@ -553,9 +565,9 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
             if (print_to_terminal)
             {
                 if (valg_input == 1)
-                    printf("Day %d | Input 1:(S=%.0f, E=%.0f, I=%.0f, H=%.0f, R=%.0f, Hmax1 = %.0f )\n", n, sum_S_input_1, sum_E_input_1, sum_I_input_1, sum_H_input_1, sum_R_input_1, Hmax1);
+                    printf("Day %d | Input 1:(S=%.0f, E=%.0f, I=%.0f, H=%.0f, R=%.0f, Hmax1 = %.2f )\n", n, sum_S_input_1, sum_E_input_1, sum_I_input_1, sum_H_input_1, sum_R_input_1, Hmax1);
                 else if (valg_input == 2)
-                    printf("Day %d | Input 1:(S=%.0f, E=%.0f, I=%.0f, H=%.0f, R=%.0f, Hmax1 = %.0f) Input 2: (S=%.0f, E=%.0f, I=%.0f, H=%.0f, R=%.0f, Hmax2 = %.0f)\n", n, sum_S_input_1, sum_E_input_1, sum_I_input_1, sum_H_input_1, sum_R_input_1, Hmax1, sum_S_input_2, sum_E_input_2, sum_I_input_2, sum_H_input_2, sum_R_input_2, Hmax2);
+                    printf("Day %d | Input 1:(S=%.0f, E=%.0f, I=%.0f, H=%.0f, R=%.0f, Hmax1 = %.2f) Input 2: (S=%.0f, E=%.0f, I=%.0f, H=%.0f, R=%.0f, Hmax2 = %.2f)\n", n, sum_S_input_1, sum_E_input_1, sum_I_input_1, sum_H_input_1, sum_R_input_1, Hmax1, sum_S_input_2, sum_E_input_2, sum_I_input_2, sum_H_input_2, sum_R_input_2, Hmax2);
             }
 
             if (file != NULL)

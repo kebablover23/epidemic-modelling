@@ -19,6 +19,7 @@ void RunAllTests(void)
     // Adding test suites:
     CuSuiteAddSuite(suite, (CuSuite *)vaccine_udrulning_suite());
     CuSuiteAddSuite(suite, (CuSuite *)migration_suite());
+    CuSuiteAddSuite(suite, (CuSuite *)sir_suite());
 
     CuSuiteRun(suite);
     CuSuiteSummary(suite, output);

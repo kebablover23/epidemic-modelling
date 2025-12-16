@@ -25,5 +25,6 @@ void lavEnkeltGnuplotScript(const char *scriptFile, const char *dataFile, int mo
 
 CuSuite *vaccine_udrulning_suite(void);
 CuSuite *migration_suite(void);
+CuSuite *sir_suite(void);
 
 #endif
