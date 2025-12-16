@@ -9,6 +9,6 @@ R = 0
 
 BETA = 0.30
 GAMMA = 0.142
-SIGMA = 0.1
+SIGMA = 0.333
 h = 0.0063
 t = 0.1
