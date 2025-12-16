@@ -17,7 +17,6 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-// Stokastiske hjælpefunktioner
 // Poisson RNG baseret på Knuth for små lambda og normalapproximation for store lambda
 long poisson(double lambda)
 {
