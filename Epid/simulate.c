@@ -115,11 +115,10 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
     }
 
     // Aldersspecifikke parametre
-    float age_h_1[ALDERS_GRUPPER] = {0.09, 0.09, 0.09, 0.50}; // Sandsynlighed for at ende på hospitalet
-    float age_beta_1[ALDERS_GRUPPER] = {1, 1, 1, 1};          // Antal kontakter
+    float age_h[ALDERS_GRUPPER] = {0.09, 0.09, 0.09, 0.50}; // Sandsynlighed for at ende på hospitalet
+    float age_beta[ALDERS_GRUPPER] = {1.5, 1, 1, 1.5};      // Antal kontakter
 
-    float age_h_2[ALDERS_GRUPPER] = {0.3, 0.3, 0.3, 0.7}; // Sandsynlighed for at ende på hospitalet
-    float age_beta_2[ALDERS_GRUPPER] = {1, 1, 1, 1};      // Antal kontakter
+    // Antal kontakter
 
     float age_modtagelig_igen[ALDERS_GRUPPER] = {1.0f / 365, 1.0f / 300, 1.0f / 250, 1.0f / 180}; // jo yngre, jo længere er man immun
 
@@ -155,12 +154,12 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
                 // Udregn infectious totals hver sub-step
                 float total_I_input_1 = 0, total_I_input_2 = 0;
 
-                for (int ii = 0; ii < ALDERS_GRUPPER; ii++)
+                for (int i = 0; i < ALDERS_GRUPPER; i++)
                 {
-                    total_I_input_1 += I_input_1[ii];
+                    total_I_input_1 += I_input_1[i];
                     if (valg_input == 2)
                     {
-                        total_I_input_2 += I_input_2[ii];
+                        total_I_input_2 += I_input_2[i];
                     }
                 }
 
@@ -183,9 +182,20 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
                         I_out_2 = t1 * dt * I_input_2[i];
                         R_out_2 = t1 * dt * R_input_2[i];
                     }
+                    // aldersparamtre
+                    float beta_i_1 = tekstfil[0].beta * age_beta[i];
+                    float gamma_i_1 = tekstfil[0].gamma;
+                    float sigma_i_1 = tekstfil[0].sigma;
+                    float h_i_1 = tekstfil[0].h * age_h[i];
+
+                    // for by 2
+                    float beta_i_2 = tekstfil[1].beta * age_beta[i];
+                    float gamma_i_2 = tekstfil[1].gamma;
+                    float sigma_i_2 = tekstfil[1].sigma;
+                    float h_i_2 = tekstfil[1].h * age_h[i];
 
                     //  Input 1 - rate skaleret med dt
-                    double rate_inf_1 = tekstfil[0].beta * S_input_1[i] * total_I_input_1 / tekstfil[0].N;
+                    double rate_inf_1 = beta_i_1 * S_input_1[i] * total_I_input_1 / tekstfil[0].N;
                     long n_inf_1 = poisson(rate_inf_1 * dt);
                     long n_prog_1 = 0;
                     long n_rec_1 = poisson(tekstfil[0].gamma * I_input_1[i] * dt);
@@ -200,8 +210,8 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
                     else if (model_type == 3)
                     {
                         n_prog_1 = poisson(tekstfil[0].sigma * E_input_1[i] * dt);
-                        n_hosp_1 = poisson(tekstfil[0].h * I_input_1[i] * dt);
-                        n_h_rec_1 = poisson((tekstfil[0].gamma / 2.0) * H_input_1[i] * dt);
+                        n_hosp_1 = poisson(h_i_1 * I_input_1[i] * dt);
+                        n_h_rec_1 = poisson((tekstfil[0].gamma) * H_input_1[i] * dt);
                         n_R_to_S_1 = poisson(age_modtagelig_igen[i] * R_input_1[i] * dt);
                     }
                     if (n_inf_1 > (long)S_input_1[i])
@@ -242,7 +252,7 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
                     // Input 2 - rates skaleret med dt (kun hvis valg_input == 2)
                     if (valg_input == 2)
                     {
-                        double rate_inf_2 = tekstfil[1].beta * S_input_2[i] * total_I_input_2 / tekstfil[1].N;
+                        double rate_inf_2 = beta_i_2 * S_input_2[i] * total_I_input_2 / tekstfil[1].N;
                         long n_inf_2 = poisson(rate_inf_2 * dt);
                         long n_prog_2 = 0;
                         long n_rec_2 = poisson(tekstfil[1].gamma * I_input_2[i] * dt);
@@ -257,8 +267,8 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
                         else if (model_type == 3)
                         {
                             n_prog_2 = poisson(tekstfil[1].sigma * E_input_2[i] * dt);
-                            n_hosp_2 = poisson(tekstfil[1].h * I_input_2[i] * dt);
-                            n_h_rec_2 = poisson((tekstfil[1].gamma / 2.0) * H_input_2[i] * dt);
+                            n_hosp_2 = poisson(h_i_2 * I_input_2[i] * dt);
+                            n_h_rec_2 = poisson((tekstfil[1].gamma) * H_input_2[i] * dt);
                             n_R_to_S_2 = poisson(age_modtagelig_igen[i] * R_input_2[i] * dt); // tab af immunitet (R til S)
                         }
                         if (n_inf_2 > (long)S_input_2[i])
@@ -383,32 +393,21 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
                 }
 
                 // Aldersspecifikke parametre
-                float beta_i_1 = tekstfil[0].beta * age_beta_1[i];
+                float beta_i_1 = tekstfil[0].beta * age_beta[i];
                 float gamma_i_1 = tekstfil[0].gamma;
                 float sigma_i_1 = tekstfil[0].sigma;
-                float h_i_1 = age_h_1[i];
+                float h_i_1 = tekstfil[0].h * age_h[i];
 
-                if (valg_input == 2)
-                {
-                    float beta_i_2 = tekstfil[1].beta * age_beta_2[i];
-                    float gamma_i_2 = tekstfil[1].gamma;
-                    float sigma_i_2 = tekstfil[1].sigma;
-                    float h_i_2 = age_h_2[i];
-                }
+                // for by 2
+                float beta_i_2 = tekstfil[1].beta * age_beta[i];
+                float gamma_i_2 = tekstfil[1].gamma;
+                float sigma_i_2 = tekstfil[1].sigma;
+                float h_i_2 = tekstfil[1].h * age_h[i];
 
                 if (model_type == 1)
                 {                                                                                                         // SIR
                     dS_input_1[i] = (-beta_i_1 * S_input_1[i] * total_input_1) / tekstfil[0].N;                           // - S_ud_1 + S_ud_2;
                     dI_input_1[i] = (beta_i_1 * S_input_1[i] * total_input_1) / tekstfil[0].N - gamma_i_1 * I_input_1[i]; // - I_ud_1 + I_ud_2;
-
-                    float Itest = dI_input_1[i];
-                    printf("%lf", Itest);
-
-                    double Itest1 = tekstfil[0].N;
-                    printf("%lf", Itest1);
-
-                    printf("%lf", total_input_1);
-                    printf("%lf", beta_i_1);
 
                     dR_input_1[i] = gamma_i_1 * I_input_1[i]; // - R_ud_1 + R_ud_2;
                     dE_input_1[i] = 0;
@@ -427,8 +426,8 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
                     dS_input_1[i] = -beta_i_1 * S_input_1[i] * total_input_1 / tekstfil[0].N + age_modtagelig_igen[i] * R_input_1[i] - S_ud_1 + S_ud_2;
                     dE_input_1[i] = beta_i_1 * S_input_1[i] * total_input_1 / tekstfil[0].N - sigma_i_1 * E_input_1[i] - E_ud_1 + E_ud_2;
                     dI_input_1[i] = sigma_i_1 * E_input_1[i] - gamma_i_1 * I_input_1[i] - h_i_1 * I_input_1[i] - I_ud_1 + I_ud_2;
-                    dH_input_1[i] = h_i_1 * I_input_1[i] - (gamma_i_1 / 2) * H_input_1[i];
-                    dR_input_1[i] = gamma_i_1 * I_input_1[i] + (gamma_i_1 / 2) * H_input_1[i] - age_modtagelig_igen[i] * R_input_1[i] - R_ud_1 + R_ud_2;
+                    dH_input_1[i] = h_i_1 * I_input_1[i] - gamma_i_1 * H_input_1[i];
+                    dR_input_1[i] = gamma_i_1 * I_input_1[i] + gamma_i_1 * H_input_1[i] - age_modtagelig_igen[i] * R_input_1[i] - R_ud_1 + R_ud_2;
                 }
                 // By 2 – kun hvis valg_input == 2
                 if (valg_input == 2)
@@ -436,27 +435,27 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
 
                     if (model_type == 1)
                     {
-                        dS_input_2[i] = -tekstfil[1].beta * S_input_2[i] * total_input_2 / tekstfil[1].N - S_ud_2 + S_ud_1;
-                        dI_input_2[i] = tekstfil[1].beta * S_input_2[i] * total_input_2 / tekstfil[1].N - tekstfil[1].gamma * I_input_2[i] - I_ud_2 + I_ud_1;
+                        dS_input_2[i] = -beta_i_2 * S_input_2[i] * total_input_2 / tekstfil[1].N - S_ud_2 + S_ud_1;
+                        dI_input_2[i] = beta_i_2 * S_input_2[i] * total_input_2 / tekstfil[1].N - tekstfil[1].gamma * I_input_2[i] - I_ud_2 + I_ud_1;
                         dR_input_2[i] = tekstfil[1].gamma * I_input_2[i] - R_ud_2 + R_ud_1;
                         dE_input_2[i] = 0;
                         dH_input_2[i] = 0;
                     }
                     else if (model_type == 2)
                     {
-                        dS_input_2[i] = -tekstfil[1].beta * S_input_2[i] * total_input_2 / tekstfil[1].N - S_ud_2 + S_ud_1;
-                        dE_input_2[i] = tekstfil[1].beta * S_input_2[i] * total_input_2 / tekstfil[1].N - tekstfil[1].gamma * E_input_2[i] - E_ud_2 + E_ud_1;
+                        dS_input_2[i] = -beta_i_2 * S_input_2[i] * total_input_2 / tekstfil[1].N - S_ud_2 + S_ud_1;
+                        dE_input_2[i] = beta_i_2 * S_input_2[i] * total_input_2 / tekstfil[1].N - tekstfil[1].gamma * E_input_2[i] - E_ud_2 + E_ud_1;
                         dI_input_2[i] = tekstfil[1].sigma * E_input_2[i] - tekstfil[1].gamma * I_input_2[i] - I_ud_2 + I_ud_1;
                         dR_input_2[i] = tekstfil[1].gamma * I_input_2[i] - R_ud_2 + R_ud_1;
                         dH_input_2[i] = 0;
                     }
                     else if (model_type == 3)
                     {
-                        dS_input_2[i] = -tekstfil[1].beta * S_input_2[i] * total_input_2 / tekstfil[1].N + age_modtagelig_igen[i] * R_input_2[i] - S_ud_2 + S_ud_1;
-                        dE_input_2[i] = tekstfil[1].beta * S_input_2[i] * total_input_2 / tekstfil[1].N - tekstfil[1].sigma * E_input_2[i] - E_ud_2 + E_ud_1;
-                        dI_input_2[i] = tekstfil[1].sigma * E_input_2[i] - tekstfil[1].gamma * I_input_2[i] - tekstfil[1].h * I_input_2[i] - I_ud_2 + I_ud_1;
-                        dH_input_2[i] = tekstfil[1].h * I_input_2[i] - (tekstfil[1].gamma / 2) * H_input_2[i];
-                        dR_input_2[i] = tekstfil[1].gamma * I_input_2[i] + (tekstfil[1].gamma / 2) * H_input_2[i] - age_modtagelig_igen[i] * R_input_2[i] - R_ud_2 + R_ud_1;
+                        dS_input_2[i] = -beta_i_2 * S_input_2[i] * total_input_2 / tekstfil[1].N + age_modtagelig_igen[i] * R_input_2[i] - S_ud_2 + S_ud_1;
+                        dE_input_2[i] = beta_i_2 * S_input_2[i] * total_input_2 / tekstfil[1].N - tekstfil[1].sigma * E_input_2[i] - E_ud_2 + E_ud_1;
+                        dI_input_2[i] = tekstfil[1].sigma * E_input_2[i] - tekstfil[1].gamma * I_input_2[i] - h_i_2 * I_input_2[i] - I_ud_2 + I_ud_1;
+                        dH_input_2[i] = h_i_2 * I_input_2[i] - tekstfil[1].gamma * H_input_2[i];
+                        dR_input_2[i] = tekstfil[1].gamma * I_input_2[i] + tekstfil[1].gamma * H_input_2[i] - age_modtagelig_igen[i] * R_input_2[i] - R_ud_2 + R_ud_1;
                     }
                 }
                 else
@@ -497,7 +496,7 @@ void simulerEpidemi(SEIHRS_model *tekstfil_orig, int model_type, int use_app, in
         float sum_S_input_1 = 0, sum_E_input_1 = 0, sum_I_input_1 = 0, sum_R_input_1 = 0, sum_H_input_1 = 0;
         float sum_S_input_2 = 0, sum_E_input_2 = 0, sum_I_input_2 = 0, sum_R_input_2 = 0, sum_H_input_2 = 0;
 
-        for (int i = 0; i <= ALDERS_GRUPPER; i++)
+        for (int i = 0; i < ALDERS_GRUPPER; i++)
         {
             sum_S_input_1 += S_input_1[i];
             sum_E_input_1 += E_input_1[i];
