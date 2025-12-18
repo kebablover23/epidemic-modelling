@@ -1,0 +1,16 @@
+// Indtast dine værdier herunder
+TID I DAGE = 0
+
+N = 0
+S = 0
+E = 0
+I = 0
+H = 0
+R = 0
+
+
+BETA = 0
+GAMMA = 0
+SIGMA = 0
+h = 0
+t = 0 
