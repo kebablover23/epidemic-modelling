@@ -17,10 +17,9 @@ void brugerInput()
 
     // Vælg model
     char valg[8];
-    printf("\nVælg model (SIR, SEIR, SEIHRS): ");
+    printf("\nVaelg model (SIR, SEIR, SEIHRS): ");
 
     scanf(" %7s", valg);
-
     int model_type = 0;
     if (strcmp(valg, "SIR") == 0 || strcmp(valg, "sir") == 0)
     {
@@ -60,7 +59,7 @@ void brugerInput()
 
     if (input_fil_1 == NULL)
     {
-        printf("Kunne ikke åbne filen: %s\n", filnavn);
+        printf("Kunne ikke aabne filen: %s\n", filnavn);
         printf("Tjek at filen findes i samme mappe som programmet.\n");
         exit(EXIT_FAILURE);
     }
@@ -75,7 +74,7 @@ void brugerInput()
         FILE *input_fil_2 = fopen(filnavn2, "r");
         if (input_fil_2 == NULL)
         {
-            printf("Kunne ikke åbne filen: %s\n", filnavn2);
+            printf("Kunne ikke aabne filen: %s\n", filnavn2);
             fclose(input_fil_1);
             return;
         }
@@ -87,7 +86,7 @@ void brugerInput()
     }
     // Vælg simuleringstype
     char sim_type;
-    printf("Vælg simulerings type:\n");
+    printf("Vaelg simulerings type:\n");
     printf(" N) Normal (deterministisk)\n");
     printf(" S) Stokastisk (multiple replicates)\n");
     printf("Tast valg: ");
@@ -102,7 +101,7 @@ void brugerInput()
         FILE *output_fil = fopen("data_file.txt", "w");
         if (!output_fil)
         {
-            printf("Kan ikke åbne fil\n");
+            printf("Kan ikke aabne fil\n");
             return;
         }
 
@@ -113,9 +112,9 @@ void brugerInput()
         // Lav gnuplot script for en enkelt simulering
         lavEnkeltGnuplotScript("plot_single.gnu", "data_file.txt", model_type, valg_input);
         printf("Gnuplot script gemt i plot_single.gnu\n");
-        printf("Kør: gnuplot plot_single.gnu\n");
+        printf("Koer: gnuplot plot_single.gnu\n");
 
-        printf("Simuleringen er færdig. Data er gemt i data_file.txt\n");
+        printf("Simuleringen er faerdig. Data er gemt i data_file.txt\n");
     }
     else if (sim_type == 'S' || sim_type == 's')
     {
@@ -134,7 +133,7 @@ void brugerInput()
 
         koerFlereKopier(tekstfil_orig, model_type, use_app, use_vaccine, numReplicates, valg_input);
 
-        printf("Simuleringen er færdig. Data er gemt i stochastic_replicates.txt\n");
+        printf("Simuleringen er faerdig. Data er gemt i stochastic_replicates.txt\n");
     }
     else
     {
@@ -148,7 +147,7 @@ char *spoergOmFilnavn(void)
 
     // Bed brugeren om filnavn
     printf("Upload en tekstfil (se evt skabelon: skabelon.seihr.txt)\n");
-    printf("Indtast navnet på din fil (f.eks. SEIHR.txt): ");
+    printf("Indtast navnet paa din fil (f.eks. SEIHR.txt): ");
 
     scanf("%249s", filnavn); // Læser ét ord, undgår buffer overflow
     return filnavn;
@@ -175,7 +174,7 @@ SEIHRS_model indlaasFil(FILE *input_fil)
     fscanf(input_fil, " %*[^0-9]%f", &seihr.h);
     fscanf(input_fil, " %*[^0-9]%f", &seihr.t);
 
-    printf("Din fil indeholder følgende værdier:\n");
+    printf("Din fil indeholder foelgende vaerdier:\n");
     printf(" Tid i dage = %d\n\n N = %.3f\n S = %.3f\n E = %.3f\n I = %.3f\n H = %.3f\n R = %.3f\n\n Beta = %.3f\n Gamma = %.3f\n Sigma = %.3f\n h = %.3f\n t = %.3f\n", seihr.dage, seihr.N, seihr.S, seihr.E, seihr.I, seihr.H, seihr.R, seihr.beta, seihr.gamma, seihr.sigma, seihr.h, seihr.t);
 
     return seihr;
@@ -200,11 +199,11 @@ void koerFlereKopier(SEIHRS_model *org, int model_type, int use_app, int use_vac
     FILE *file = fopen("stochastic_replicates.txt", "w");
     if (!file)
     {
-        printf("Kan ikke åbne fil\n");
+        printf("Kan ikke aabne fil\n");
         return;
     }
 
-    printf("Kører %d replicates...\n", numReplicates);
+    printf("Koerer %d replicates...\n", numReplicates);
 
     for (int rep = 0; rep < numReplicates; rep++)
     {
@@ -214,12 +213,12 @@ void koerFlereKopier(SEIHRS_model *org, int model_type, int use_app, int use_vac
     }
 
     fclose(file);
-    printf("Alle replicates færdige. Data gemt i stochastic_replicates.txt\n");
+    printf("Alle replicates faerdige. Data gemt i stochastic_replicates.txt\n");
 
     // Lav gnuplot script
     lavGnuplotScript("plot_replicates.gnu", "stochastic_replicates.txt", numReplicates, model_type, valg_input);
     printf("Gnuplot script gemt i plot_replicates.gnu\n");
-    printf("Kør: gnuplot plot_replicates.gnu\n");
+    printf("Koer: gnuplot plot_replicates.gnu\n");
 }
 
 void lavGnuplotScript(const char *scriptFile, const char *dataFile, int numReplicates, int model_type, int valg_input)
