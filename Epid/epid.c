@@ -251,12 +251,17 @@ void lavGnuplotScript(const char *scriptFile, const char *dataFile, int numRepli
     fprintf(fp, "set key outside top center\n");
     fprintf(fp, "set key maxcols 5\n");
 
-    // Definer semi-transparent farver
-    fprintf(fp, "set style line 1 lc rgb '#8000FF00' lt 1 lw 1\n"); // Grøn for S
-    fprintf(fp, "set style line 2 lc rgb '#80FFA500' lt 1 lw 1\n"); // Orange for E
-    fprintf(fp, "set style line 3 lc rgb '#80FF0000' lt 1 lw 1\n"); // Rød for I
-    fprintf(fp, "set style line 4 lc rgb '#80800080' lt 1 lw 1\n"); // Lilla for H
-    fprintf(fp, "set style line 5 lc rgb '#800000FF' lt 1 lw 1\n"); // Blå for R
+    // Definer farver
+    fprintf(fp, "set style line 1 lc rgb '#00FF00' lt 1 lw 1\n"); // Grøn for S
+    fprintf(fp, "set style line 2 lc rgb '#FFA500' lt 1 lw 1\n"); // Orange for E
+    fprintf(fp, "set style line 3 lc rgb '#FF0000' lt 1 lw 1\n"); // Rød for I
+    fprintf(fp, "set style line 4 lc rgb '#800080' lt 1 lw 1\n"); // Lilla for H
+    fprintf(fp, "set style line 5 lc rgb '#0000FF' lt 1 lw 1\n"); // Blå for R
+    fprintf(fp, "set style line 6 lc rgb '#009900' dt 3 lw 1\n"); // Grøn for S til input 2
+    fprintf(fp, "set style line 7 lc rgb '#996300' dt 3 lw 1\n"); // Orange for E til input 2
+    fprintf(fp, "set style line 8 lc rgb '#990000' dt 3 lw 1\n"); // Rød for I til input 2
+    fprintf(fp, "set style line 9 lc rgb '#4D004D' dt 3 lw 1\n"); // Lilla for H til input 2
+    fprintf(fp, "set style line 10 lc rgb '#000099' dt 3 lw 1\n"); // Blå for R til input 2
 
     // Plot baseret på valgte model
 
@@ -302,19 +307,19 @@ void lavGnuplotScript(const char *scriptFile, const char *dataFile, int numRepli
                 if (!first)
                     fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 1 title 'S (Input 2)'", dataFile, rep, colS);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 6 title 'S (Input 2)'", dataFile, rep, colS);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 1 notitle", dataFile, rep, colS);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 6 notitle", dataFile, rep, colS);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 3 title 'I (Input 2)'", dataFile, rep, colI);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 8 title 'I (Input 2)'", dataFile, rep, colI);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 3 notitle", dataFile, rep, colI);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 8 notitle", dataFile, rep, colI);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 5 title 'R (Input 2)'", dataFile, rep, colR);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 10 title 'R (Input 2)'", dataFile, rep, colR);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 5 notitle", dataFile, rep, colR);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 10 notitle", dataFile, rep, colR);
                 first = 0;
             }
         }
@@ -360,24 +365,24 @@ void lavGnuplotScript(const char *scriptFile, const char *dataFile, int numRepli
                 if (!first)
                     fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 1 title 'S (Input 2)'", dataFile, rep, colS);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 6 title 'S (Input 2)'", dataFile, rep, colS);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 1 notitle", dataFile, rep, colS);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 6 notitle", dataFile, rep, colS);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 2 title 'E (Input 2)'", dataFile, rep, colE);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 7 title 'E (Input 2)'", dataFile, rep, colE);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 2 notitle", dataFile, rep, colE);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 7 notitle", dataFile, rep, colE);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 3 title 'I (Input 2)'", dataFile, rep, colI);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 8 title 'I (Input 2)'", dataFile, rep, colI);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 3 notitle", dataFile, rep, colI);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 8 notitle", dataFile, rep, colI);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 5 title 'R (Input 2)'", dataFile, rep, colR);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 10 title 'R (Input 2)'", dataFile, rep, colR);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 5 notitle", dataFile, rep, colR);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 10 notitle", dataFile, rep, colR);
                 first = 0;
             }
         }
@@ -430,29 +435,29 @@ void lavGnuplotScript(const char *scriptFile, const char *dataFile, int numRepli
                 if (!first)
                     fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 1 title 'S (Input 2)'", dataFile, rep, colS);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 6 title 'S (Input 2)'", dataFile, rep, colS);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 1 notitle", dataFile, rep, colS);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 6 notitle", dataFile, rep, colS);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 2 title 'E (Input 2)'", dataFile, rep, colE);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 7 title 'E (Input 2)'", dataFile, rep, colE);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 2 notitle", dataFile, rep, colE);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 7 notitle", dataFile, rep, colE);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 3 title 'I (Input 2)'", dataFile, rep, colI);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 8 title 'I (Input 2)'", dataFile, rep, colI);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 3 notitle", dataFile, rep, colI);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 8 notitle", dataFile, rep, colI);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 4 title 'H (Input 2)'", dataFile, rep, colH);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 9 title 'H (Input 2)'", dataFile, rep, colH);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 4 notitle", dataFile, rep, colH);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 9 notitle", dataFile, rep, colH);
                 fprintf(fp, ", \\\n");
                 if (rep == 0)
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 5 title 'R (Input 2)'", dataFile, rep, colR);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 10 title 'R (Input 2)'", dataFile, rep, colR);
                 else
-                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 5 notitle", dataFile, rep, colR);
+                    fprintf(fp, "'%s' index %d using 1:%d with lines ls 10 notitle", dataFile, rep, colR);
                 first = 0;
             }
         }
@@ -500,6 +505,11 @@ void lavEnkeltGnuplotScript(const char *scriptFile, const char *dataFile, int mo
     fprintf(fp, "set style line 3 lc rgb '#FF0000' lt 1 lw 2\n"); // Rød for I
     fprintf(fp, "set style line 4 lc rgb '#800080' lt 1 lw 2\n"); // Lilla for H
     fprintf(fp, "set style line 5 lc rgb '#0000FF' lt 1 lw 2\n"); // Blå for R
+    fprintf(fp, "set style line 6 lc rgb '#009900' dt 3 lw 1\n"); // Grøn for S til input 2
+    fprintf(fp, "set style line 7 lc rgb '#996300' dt 3 lw 1\n"); // Orange for E til input 2
+    fprintf(fp, "set style line 8 lc rgb '#990000' dt 3 lw 1\n"); // Rød for I til input 2
+    fprintf(fp, "set style line 9 lc rgb '#4D004D' dt 3 lw 1\n"); // Lilla for H til input 2
+    fprintf(fp, "set style line 10 lc rgb '#000099' dt 3 lw 1\n"); // Blå for R til input 2
 
     int baseA = 1; // Input 1 offset
     int baseK = 4;
@@ -537,26 +547,26 @@ void lavEnkeltGnuplotScript(const char *scriptFile, const char *dataFile, int mo
 
         if (model_type == 1) // SIR
         {
-            fprintf(fp, "    '%s' using 1:%d with lines ls 1 title 'S (Input 2)', \\\n", dataFile, baseK + 1);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 3 title 'I (Input 2)', \\\n", dataFile, baseK + 3);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 5 title 'R (Input 2)'", dataFile, baseK + 5);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 6 title 'S (Input 2)', \\\n", dataFile, baseK + 1);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 8 title 'I (Input 2)', \\\n", dataFile, baseK + 3);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 10 title 'R (Input 2)'", dataFile, baseK + 5);
         }
         else if (model_type == 2) // SEIR
         {
             int baseK = 5;
-            fprintf(fp, "    '%s' using 1:%d with lines ls 1 title 'S (Input 2)', \\\n", dataFile, baseK + 1);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 2 title 'E (Input 2)', \\\n", dataFile, baseK + 2);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 3 title 'I (Input 2)', \\\n", dataFile, baseK + 3);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 5 title 'R (Input 2)'", dataFile, baseK + 4);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 6 title 'S (Input 2)', \\\n", dataFile, baseK + 1);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 7 title 'E (Input 2)', \\\n", dataFile, baseK + 2);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 8 title 'I (Input 2)', \\\n", dataFile, baseK + 3);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 10 title 'R (Input 2)'", dataFile, baseK + 4);
         }
         else if (model_type == 3) // SEIHRS
         {
             int baseK = 6;
-            fprintf(fp, "    '%s' using 1:%d with lines ls 1 title 'S (Input 2)', \\\n", dataFile, baseK + 1);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 2 title 'E (Input 2)', \\\n", dataFile, baseK + 2);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 3 title 'I (Input 2)', \\\n", dataFile, baseK + 3);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 4 title 'H (Input 2)', \\\n", dataFile, baseK + 4);
-            fprintf(fp, "    '%s' using 1:%d with lines ls 5 title 'R (Input 2)'", dataFile, baseK + 5);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 6 title 'S (Input 2)', \\\n", dataFile, baseK + 1);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 7 title 'E (Input 2)', \\\n", dataFile, baseK + 2);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 8 title 'I (Input 2)', \\\n", dataFile, baseK + 3);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 9 title 'H (Input 2)', \\\n", dataFile, baseK + 4);
+            fprintf(fp, "    '%s' using 1:%d with lines ls 10 title 'R (Input 2)'", dataFile, baseK + 5);
         }
     }
 
