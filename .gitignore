@@ -1,0 +1,47 @@
+# Build directories
+build/
+
+# Compiled executables and object files
+*.exe
+*.o
+*.obj
+*.out
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Editor backup files
+*~
+
+# Generated simulation data and Gnuplot scripts
+output/*.txt
+output/*.gnu
+output/plot.gnu
+output/plots/
+
+# Generated files from the original implementation
+data_file.txt
+stochastic_replicates.txt
+plot_single.gnu
+plot_replicates.gnu
+test_output*.txt
+
+# Temporary test files
+test_tmp_scenario.txt
+
+# Historical executable names
+projekt
+testprog
+testprogram
+
+# Local editor configuration
+.vscode/
+
+# Local AI development-tool data
+.freebuff/
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini

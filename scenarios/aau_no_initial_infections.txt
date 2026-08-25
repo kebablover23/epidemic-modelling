@@ -1,0 +1,13 @@
+# AAU example with no initial infections
+DAYS = 1000
+N = 121879
+S = 121879
+E = 0
+I = 0
+H = 0
+R = 0
+BETA = 1.11
+GAMMA = 0.111
+SIGMA = 0.200
+HOSPITALIZATION_RATE = 0.01
+MIGRATION_RATE = 0.001

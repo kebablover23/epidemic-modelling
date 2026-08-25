@@ -1,0 +1,13 @@
+# One-day SIR regression scenario
+DAYS = 1
+N = 100
+S = 90
+E = 0
+I = 10
+H = 0
+R = 0
+BETA = 1.11
+GAMMA = 0.111
+SIGMA = 0.200
+HOSPITALIZATION_RATE = 0.01
+MIGRATION_RATE = 0.001
