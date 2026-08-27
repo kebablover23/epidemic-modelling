@@ -1,0 +1,13 @@
+# Copenhagen influenza scenario
+DAYS = 365
+N = 667100
+S = 667099
+E = 0
+I = 1
+H = 0
+R = 0
+BETA = 0.30
+GAMMA = 0.142
+SIGMA = 0.1
+HOSPITALIZATION_RATE = 0.01
+MIGRATION_RATE = 0.001

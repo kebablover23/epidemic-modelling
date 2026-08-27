@@ -1,0 +1,5 @@
+CuTest files retained from the original group project.
+
+The project report documents that the group used CuTest while developing its own test driver, test suites, and test cases. The available project material does not establish the original source or licence status of CuTest.c and CuTest.h.
+
+These files are preserved for historical reference and are not used by the active portfolio test runner. Their authorship and reuse terms should be verified before redistribution.
